@@ -2,7 +2,7 @@ package com.deltatempest.main;
 
 public class Enemy {
     private String names;
-    private int baseHealth = 10, baseAttack = 1;
+    private int baseHealth = 8, baseAttack = 1;
 
     public Enemy(String names, int baseAttack, int baseHealth) {
         this.names = names;
@@ -31,7 +31,11 @@ public class Enemy {
         this.names = names;
     }
 
+    public void setBaseHealth(int baseHealth) {
+        this.baseHealth = baseHealth;
+    }
 
-
-
+    public void setBaseAttack(int baseAttack) {
+        this.baseAttack = baseAttack;
+    }
 }
