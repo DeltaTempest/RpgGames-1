@@ -27,6 +27,9 @@ public class Main {
 
 
     }
+    static void displayMessagesGotWeapon(Weapon weapon) {
+
+    }
     static void displayEnemyStats (Enemy enemy) {
         System.out.println("Enemy Hp: "+enemy.getBaseHealth() + "\nEnemy AttackPower: " + enemy.getBaseAttack());
     }
@@ -41,18 +44,19 @@ public class Main {
     }
     static boolean battlePhase(Enemy enemy) {
         boolean isPlayerWin = false;
-        firstLine();
+
         displayPlayerStats();
         System.out.println();
         displayEnemyStats(enemy);
-        System.out.println("\n");
-        lastLine();
-        System.out.println("\n");
+        System.out.println();
+
 
         while (enemy.getBaseHealth() > 0 || playerHp > 0) {
             firstLine();
-            System.out.println("Enemy: Come on attack me!\n\t1. Attack\n\t2. Run");
+            System.out.println("Your turn\n\t1. Attack\n\t2. Run");
             numbers = scanner.nextInt();
+
+            lastLine();
             //Check if user attack or running
             if (numbers == 1) {
                 //user attacking
@@ -60,21 +64,24 @@ public class Main {
                 if (randNumber == 0) {
                     randNumber = -1;
                     //enemy taking damage
-                    System.out.println("Ouch");
+                    System.out.println("\nYou hit the enemy with " + playerAttackPower + " Attack damage");
                     int enemyHealth = firstStranger.getBaseHealth();
                     enemyHealth = enemyHealth - playerAttackPower;// decrement stranger health with playerattackpower
                     firstStranger.setBaseHealth(enemyHealth);
                     if (enemy.getBaseHealth() <= 0) {
+                        System.out.println("\nEnemy dies");
+                        lastLine();
                         isPlayerWin = true;
                         break;
                     }
-                    System.out.println("You gonna pay for that, take this!");
-                    randNumber = rand.nextInt(2);
+                    System.out.println("Enemy turn!\n");
+                    randNumber = rand.nextInt(2); // rand number for user trying dodge
+
                     //enemy attack user
                     if (randNumber == 0) {
                         randNumber = -1;
                         //if user failed to dodge
-                        System.out.println("You got hit by " + enemy.getBaseAttack() + " damage");
+                        System.out.println("You got hit by " + enemy.getBaseAttack() + " damage\n");
                         if (playerHp <= 0) {
                             System.out.println("Player die");
                             isPlayerWin = false;
@@ -82,12 +89,15 @@ public class Main {
                         }
                         playerHp = playerHp - enemy.getBaseAttack();
                         displayPlayerStats();
+                        System.out.println();
                         displayEnemyStats(enemy);
                     } else if (randNumber == 1) {
                         randNumber = -1;
                         //if user successfully dodge
-                        System.out.println("You dodge the attack!");
+                        System.out.println("You dodge the attack!\n");
+
                         displayPlayerStats();
+                        System.out.println();
                         displayEnemyStats(enemy);
 
                     }
@@ -95,13 +105,14 @@ public class Main {
                 } else if (randNumber == 1) {
                     randNumber = -1;
                     //if enemy dodge it
-                    System.out.println("Hah u think u can hit me? Take this!\n");
+                    System.out.println("\nThe enemy dodge your attack\n");
+                    System.out.println("Enemy turns\n");
                     randNumber = rand.nextInt(2);
                     //enemy attack user
                     if (randNumber == 0) {
                         randNumber = -1;
                         //if user failed to dodge
-                        System.out.println("You got hit by " + enemy.getBaseAttack() + " damage");
+                        System.out.println("You got hit by enemy for " + enemy.getBaseAttack() + " damage\n");
                         playerHp = playerHp - enemy.getBaseAttack();
                         displayPlayerStats();
                         System.out.println();
@@ -109,7 +120,7 @@ public class Main {
                     } else if (randNumber == 1) {
                         randNumber = -1;
                         //if user successfully dodge
-                        System.out.println("You dodge the attack!");
+                        System.out.println("You dodge the attack!\n");
                         displayPlayerStats();
                         System.out.println();
                         displayEnemyStats(enemy);
@@ -119,7 +130,7 @@ public class Main {
 
                 }
             } else if (numbers == 2) {
-                System.out.println("What a coward!\n");
+                System.out.println("You run from a fight\n");
                 displayPlayerStats();
                 isPlayerWin = false;
                 break;
@@ -131,7 +142,7 @@ public class Main {
     }
     static int firstMeetStranger() {
         boolean isPlayerWin = false;
-        firstLine();
+
         System.out.println("The game begins!\n");
         lastLine();
         System.out.println("\n" +
@@ -152,10 +163,13 @@ public class Main {
             System.out.println("You: Im okay thanks for asking. Umm can i know what place is this?");
             return 1;
         } else if (numbers == 2) {
-            System.out.println("Why you suddenly fight me?\n");
-            isPlayerWin = battlePhase(firstStranger);
-            if (isPlayerWin == true) {
+            System.out.println();
+            lastLine();
+            System.out.println();
+            System.out.println("Stranger: Why you suddenly fight me?\n");
 
+            if (battlePhase(firstStranger) == true) {
+                System.out.println("\nYou win the battle.\nYou took his weapon.");
             }
             return 1;
         } else if (numbers == 3) {
