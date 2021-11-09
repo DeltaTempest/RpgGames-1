@@ -1,27 +1,36 @@
 package com.deltatempest.main;
 
+import java.util.ArrayList;
+
 public class Weapon {
-    private String names;
-    private int damageBonus;
+    private int attackBonus = 0;
+    private String weaponName;
 
-    public Weapon(String names, int damageBonus) {
-        this.names = names;
-        this.damageBonus = damageBonus;
+
+
+    public Weapon() {
+
+    }
+    public Weapon(String weaponName, int attackBonus) {
+        this.weaponName = weaponName;
+        this.attackBonus = attackBonus;
     }
 
-    public String getNames() {
-        return names;
+
+
+    public int getAttackBonus() {
+        return attackBonus;
     }
 
-    public void setNames(String names) {
-        this.names = names;
+    public void setAttackBonus(int attackBonus) {
+        this.attackBonus = attackBonus;
     }
 
-    public int getDamageBonus() {
-        return damageBonus;
+    public String getWeaponName() {
+        return weaponName;
     }
 
-    public void setDamageBonus(int damageBonus) {
-        this.damageBonus = damageBonus;
+    public void setWeaponName(String weaponName) {
+        this.weaponName = weaponName;
     }
 }

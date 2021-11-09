@@ -1,18 +1,31 @@
 package com.deltatempest.main;
 
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
-    static int numbers, playerHp = 10, playerAttackPower = 5;
+    static ArrayList<Weapon> weapons = new ArrayList<>();
+
+    static ArrayList<Armor> armors = new ArrayList<>();
+    static Map<String, Enemy> enemies = new HashMap<>();
+
+    static PlayerStats player = new PlayerStats();
+    static int numbers, playerHp, playerAttackPower;
+
+
     static Scanner scanner = new Scanner(System.in);
-    static Enemy firstStranger = new Enemy("Muly");
+
     static Random rand = new Random();
-    String weapon = "Hand";
+
 
 
     public static void main(String[] args) {
+
+
+
+        loadAllWeapons();
+        loadAllArmors();
+        loadAllEntities();
 
 
         while(true) {
@@ -27,11 +40,30 @@ public class Main {
 
 
     }
-    static void displayMessagesGotWeapon(Weapon weapon) {
+    static void loadAllEntities() {
+        //Load Player stats
+        player = new PlayerStats(10, 0, 1, new Weapon("Fist", 1));
+        playerHp = player.getMaxHp();
+        playerAttackPower = player.getAttackPower();
+
+        //Load enemy stats
+        enemies.put("firstStranger", new Enemy("Jacob", 1, 10, weapons.get(0), armors.get(0)));
 
     }
+
+    static void loadAllArmors() {
+
+        armors.add(new Armor("Leather Armor", 1)); // ID = 0
+    }
+
+    static void loadAllWeapons() {
+        weapons.add(new Weapon("Fist", 0)); // ID = 0
+        weapons.add(new Weapon("knife", 1)); // ID = 1
+
+    }
+
     static void displayEnemyStats (Enemy enemy) {
-        System.out.println("Enemy Hp: "+enemy.getBaseHealth() + "\nEnemy AttackPower: " + enemy.getBaseAttack());
+        System.out.println("Enemy Hp: "+enemy.getMaxHealth() + "\nEnemy AttackPower: " + enemy.getAttackPower());
     }
     static void displayPlayerStats() {
         System.out.println("Your HP: " + playerHp + "\nYour Attack: " + playerAttackPower);
@@ -43,6 +75,8 @@ public class Main {
         System.out.print("=========================================================");
     }
     static boolean battlePhase(Enemy enemy) {
+        //TODO mengganti playerHp, playerAttackPower dengan player.getMaxHp dan player.getAttackPower
+
         boolean isPlayerWin = false;
 
         displayPlayerStats();
@@ -51,8 +85,10 @@ public class Main {
         System.out.println();
 
 
-        while (enemy.getBaseHealth() > 0 || playerHp > 0) {
+        while (enemy.getMaxHealth() > 0 || playerHp > 0) {
             firstLine();
+
+            //Mengeluarkan option
             System.out.println("Your turn\n\t1. Attack\n\t2. Run");
             numbers = scanner.nextInt();
 
@@ -60,37 +96,49 @@ public class Main {
             //Check if user attack or running
             if (numbers == 1) {
                 //user attacking
-                int randNumber = rand.nextInt(2); //rand for making dodge possible
+                int randNumber = rand.nextInt(2); //rand for making cpu dodge
                 if (randNumber == 0) {
                     randNumber = -1;
-                    //enemy taking damage
+                    //enemy taking damage or failed to dodge
                     System.out.println("\nYou hit the enemy with " + playerAttackPower + " Attack damage");
-                    int enemyHealth = firstStranger.getBaseHealth();
-                    enemyHealth = enemyHealth - playerAttackPower;// decrement stranger health with playerattackpower
-                    firstStranger.setBaseHealth(enemyHealth);
-                    if (enemy.getBaseHealth() <= 0) {
-                        System.out.println("\nEnemy dies");
+
+                    //membuat variabel baru dengan isi healthnya musuh
+                    int enemyHealth = enemy.getMaxHealth();
+                    enemyHealth = enemyHealth - playerAttackPower;// decrement enemy baseHealth with playerattackpower
+                    enemy.setBaseHealth(enemyHealth);
+
+                    //mengecek apakah enemy sudah mati atau belum
+                    if (enemy.getMaxHealth() <= 0) {
+                        System.out.println("\nPlayer Wins!");
                         lastLine();
                         isPlayerWin = true;
                         break;
                     }
+
+                    //enemy attack user
                     System.out.println("Enemy turn!\n");
                     randNumber = rand.nextInt(2); // rand number for user trying dodge
 
-                    //enemy attack user
+                    //if user failed to dodge
                     if (randNumber == 0) {
                         randNumber = -1;
                         //if user failed to dodge
-                        System.out.println("You got hit by " + enemy.getBaseAttack() + " damage\n");
+                        System.out.println("You got hit by " + enemy.getAttackPower() + " damage\n");
+
+                        //mengecek apakah Hp user telah habis atau belum
                         if (playerHp <= 0) {
                             System.out.println("Player die");
                             isPlayerWin = false;
                             break;
                         }
-                        playerHp = playerHp - enemy.getBaseAttack();
+                        playerHp = playerHp - enemy.getAttackPower();
+
                         displayPlayerStats();
                         System.out.println();
                         displayEnemyStats(enemy);
+
+
+                    // if user dodge
                     } else if (randNumber == 1) {
                         randNumber = -1;
                         //if user successfully dodge
@@ -102,24 +150,30 @@ public class Main {
 
                     }
 
+
+                // kalau enemy berhasil dodge
                 } else if (randNumber == 1) {
                     randNumber = -1;
-                    //if enemy dodge it
                     System.out.println("\nThe enemy dodge your attack\n");
-                    System.out.println("Enemy turns\n");
-                    randNumber = rand.nextInt(2);
+
                     //enemy attack user
+                    System.out.println("Enemy turns\n");
+                    randNumber = rand.nextInt(2); // rand number for user trying dodge
+
+                    //user failed to dodge
                     if (randNumber == 0) {
                         randNumber = -1;
-                        //if user failed to dodge
-                        System.out.println("You got hit by enemy for " + enemy.getBaseAttack() + " damage\n");
-                        playerHp = playerHp - enemy.getBaseAttack();
+
+                        System.out.println("You got hit by enemy for " + enemy.getAttackPower() + " damage\n");
+                        playerHp = playerHp - enemy.getAttackPower();
                         displayPlayerStats();
                         System.out.println();
                         displayEnemyStats(enemy);
+
+                    // user berhasil dodge
                     } else if (randNumber == 1) {
                         randNumber = -1;
-                        //if user successfully dodge
+
                         System.out.println("You dodge the attack!\n");
                         displayPlayerStats();
                         System.out.println();
@@ -130,17 +184,23 @@ public class Main {
 
                 }
             } else if (numbers == 2) {
-                System.out.println("You run from a fight\n");
+                //if user run from fight
+                System.out.println("\nYou run from a fight\n");
                 displayPlayerStats();
                 isPlayerWin = false;
                 break;
             }
         }
+
+        //return isPlayerWin untuk kondisi battlenya
         return isPlayerWin;
 
 
     }
+
+
     static int firstMeetStranger() {
+        //return 1 = buat memberhentikan while loop di main method
         boolean isPlayerWin = false;
 
         System.out.println("The game begins!\n");
@@ -159,25 +219,43 @@ public class Main {
         System.out.println();
 
         numbers = scanner.nextInt();
+
+        //User choose say that you are okay
         if (numbers == 1) {
             System.out.println("You: Im okay thanks for asking. Umm can i know what place is this?");
             return 1;
+
+
+        //User choose to fight him
         } else if (numbers == 2) {
             System.out.println();
             lastLine();
             System.out.println();
-            System.out.println("Stranger: Why you suddenly fight me?\n");
+            System.out.println("Stranger: Wait why you wanna attack me?\n");
 
-            if (battlePhase(firstStranger) == true) {
+            if (battlePhase(enemies.get("firstStranger"))) {
                 System.out.println("\nYou win the battle.\nYou took his weapon.");
+            } else {
+                System.out.println("");
+                lastLine();
+                System.out.println();
+                System.out.println("Why you suddenly attack me? im just trying to help you\n");
+                lastLine();
             }
+
+
+            //mereturn 1 untuk nge break while loop di main method
             return 1;
+
+
+
         } else if (numbers == 3) {
             System.out.println("You leave him just like that\n\n" +
                     "Stranger: What i'm just asking you know, well nmv\n" +
                     "\nU see two path west and east. Where you wanna go?");
             return 1;
         }
+
         return 0;
     }
     static int startingGames() {
@@ -189,15 +267,34 @@ public class Main {
         String names = scanner.nextLine();
 
         firstLine();
-        System.out.println("Hello " + names + "! do you wanna continue playing?\n\t1. Continue\n\t2. Exit\n");
-        lastLine();
+        System.out.println("Hello " + names);
 
-        System.out.println("");
-        numbers = scanner.nextInt();
-        if (numbers == 2) {
-            System.out.println("Hope we can meet in other time!");
-            return 1;
+        while (true) {
+            System.out.println( "\nDo you wanna continue? \n\t1. Continue\n\t2. Stats\n\t3. Exit\n");
+            lastLine();
+
+
+
+            System.out.println("");
+            numbers = scanner.nextInt();
+
+            if (numbers == 1) {
+                break;
+            } else if (numbers == 2) {
+                firstLine();
+                displayPlayerStats();
+                System.out.println("");
+                lastLine();
+
+
+
+            } else {
+                return 1;
+
+            }
+
         }
+        lastLine();
 
         return 0;
     }
