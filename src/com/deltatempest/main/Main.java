@@ -8,6 +8,7 @@ public class Main {
 
     static ArrayList<Armor> armors = new ArrayList<>();
     static Map<String, Enemy> enemies = new HashMap<>();
+    static ArrayList<Enemy> enemis = new ArrayList<>();
 
     static PlayerStats player = new PlayerStats();
     static int numbers, playerHp, playerAttackPower;
@@ -28,11 +29,13 @@ public class Main {
         loadAllEntities();
 
 
+
+
         while(true) {
             if (startingGames() == 1) {
                 break;
             }
-            if (firstMeetStranger() == 1) {
+            if (firstMeetWithStranger() == 1) {
                 break;
             }
 
@@ -47,13 +50,14 @@ public class Main {
         playerAttackPower = player.getAttackPower();
 
         //Load enemy stats
-        enemies.put("firstStranger", new Enemy("Jacob", 1, 10, weapons.get(0), armors.get(0)));
+        enemis.add(0, new Enemy("Jacob", 1, 10, weapons.get(1), armors.get(0)));
+
 
     }
 
     static void loadAllArmors() {
 
-        armors.add(new Armor("Leather Armor", 1)); // ID = 0
+        armors.add(new Armor("Rookie Armor", 1)); // ID = 0
     }
 
     static void loadAllWeapons() {
@@ -65,13 +69,21 @@ public class Main {
     static void displayEnemyStats (Enemy enemy) {
         System.out.println("Enemy Hp: "+enemy.getMaxHealth() + "\nEnemy AttackPower: " + enemy.getAttackPower());
     }
+    static void displayEnemyStats (Enemy enemy, Weapon weapon) {
+        System.out.println("Enemy Hp: "+enemy.getMaxHealth() + "\nEnemy AttackPower: " + enemy.getAttackPower() + "\nWeapon: " +
+                enemy.getWeaponName());
+    }
+
     static void displayPlayerStats() {
         System.out.println("Your HP: " + playerHp + "\nYour Attack: " + playerAttackPower);
     }
-    static void firstLine() {
+    static void lineWithEnterBeforeAndAfter() {
+        System.out.print("\n\n=========================================================\n\n");
+    }
+    static void lineWithDoubleEnter() {
         System.out.print("=========================================================\n\n");
     }
-    static void lastLine() {
+    static void lineNoEnter() {
         System.out.print("=========================================================");
     }
     static boolean battlePhase(Enemy enemy) {
@@ -81,18 +93,18 @@ public class Main {
 
         displayPlayerStats();
         System.out.println();
-        displayEnemyStats(enemy);
+        displayEnemyStats(enemy, weapons.get(1));
         System.out.println();
 
 
-        while (enemy.getMaxHealth() > 0 || playerHp > 0) {
-            firstLine();
+        while (enemy.getMaxHealth() > 0 && playerHp > 0) {
+            lineWithDoubleEnter();
 
             //Mengeluarkan option
             System.out.println("Your turn\n\t1. Attack\n\t2. Run");
             numbers = scanner.nextInt();
 
-            lastLine();
+            lineNoEnter();
             //Check if user attack or running
             if (numbers == 1) {
                 //user attacking
@@ -105,12 +117,12 @@ public class Main {
                     //membuat variabel baru dengan isi healthnya musuh
                     int enemyHealth = enemy.getMaxHealth();
                     enemyHealth = enemyHealth - playerAttackPower;// decrement enemy baseHealth with playerattackpower
-                    enemy.setBaseHealth(enemyHealth);
+                    enemy.setMaxHealth(enemyHealth);
 
                     //mengecek apakah enemy sudah mati atau belum
                     if (enemy.getMaxHealth() <= 0) {
-                        System.out.println("\nPlayer Wins!");
-                        lastLine();
+                        System.out.println("\nYou win the fight!");
+                        lineNoEnter();
                         isPlayerWin = true;
                         break;
                     }
@@ -198,25 +210,27 @@ public class Main {
 
     }
 
-
-    static int firstMeetStranger() {
+    static void wayToNorthAndSouth() {
+        lineWithEnterBeforeAndAfter();
+        System.out.println("You see a two ways\n\t1. North\n\t2. South\n\t3. Your stats");
+    }
+    static int firstMeetWithStranger() {
         //return 1 = buat memberhentikan while loop di main method
         boolean isPlayerWin = false;
 
-        System.out.println("The game begins!\n");
-        lastLine();
+        System.out.println("\n\nThe game begins!\n");
+        lineNoEnter();
         System.out.println("\n" +
                 "You wake up in the forest with empty hand" +
                 "\n" +
-                "You didnt know who are you and how you get here" +
+                "You didnt know who are you and how you get here\nand then you see an Stranger coming to you" +
                 "\n" +
-                "Stranger: Hey are you okay? i see you laying around in this middle forest\n" +
+                "Stranger: Hey are you okay? I see you laying around in this middle forest\n" +
                 "\n" +
                 "\t1. Say that you are ok\n\t" +
-                "2. Fight him\n\t" +
-                "3. Just leave");
-        lastLine();
-        System.out.println();
+                "2. Try to attack him");
+        lineWithDoubleEnter();
+
 
         numbers = scanner.nextInt();
 
@@ -229,18 +243,20 @@ public class Main {
         //User choose to fight him
         } else if (numbers == 2) {
             System.out.println();
-            lastLine();
+            lineNoEnter();
             System.out.println();
-            System.out.println("Stranger: Wait why you wanna attack me?\n");
+            System.out.println("Stranger: Wait why your trying to attack me?\n");
 
-            if (battlePhase(enemies.get("firstStranger"))) {
-                System.out.println("\nYou win the battle.\nYou took his weapon.");
+            if (battlePhase(enemis.get(0))) {
+                System.out.println("\nThe enemies die.\nYou Got:\n\n1. Rookie armor");
+
             } else {
                 System.out.println("");
-                lastLine();
+                lineNoEnter();
                 System.out.println();
-                System.out.println("Why you suddenly attack me? im just trying to help you\n");
-                lastLine();
+                System.out.println("Why you suddenly attack me? im just trying to help you\nwhat a rude man!\nThe Stranger leaves...");
+                wayToNorthAndSouth();
+
             }
 
 
@@ -249,29 +265,24 @@ public class Main {
 
 
 
-        } else if (numbers == 3) {
-            System.out.println("You leave him just like that\n\n" +
-                    "Stranger: What i'm just asking you know, well nmv\n" +
-                    "\nU see two path west and east. Where you wanna go?");
-            return 1;
         }
 
         return 0;
     }
     static int startingGames() {
-        firstLine();
+        lineWithDoubleEnter();
         System.out.print("Hello Player!\nWelcome to Rpg Text Games!" +
                 "\nWhat is your name?\n\n");
-        lastLine();
+        lineNoEnter();
         System.out.println();
         String names = scanner.nextLine();
 
-        firstLine();
+        lineWithDoubleEnter();
         System.out.println("Hello " + names);
 
         while (true) {
             System.out.println( "\nDo you wanna continue? \n\t1. Continue\n\t2. Stats\n\t3. Exit\n");
-            lastLine();
+            lineNoEnter();
 
 
 
@@ -281,10 +292,10 @@ public class Main {
             if (numbers == 1) {
                 break;
             } else if (numbers == 2) {
-                firstLine();
+                lineWithDoubleEnter();
                 displayPlayerStats();
                 System.out.println("");
-                lastLine();
+                lineNoEnter();
 
 
 
@@ -294,7 +305,7 @@ public class Main {
             }
 
         }
-        lastLine();
+        lineNoEnter();
 
         return 0;
     }

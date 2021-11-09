@@ -4,26 +4,28 @@ import java.util.ArrayList;
 
 public class Enemy {
     private String names;
-    private int baseHealth = 8, baseAttack = 0;
-    private Weapon weapon;
-    private Armor armor;
-
-
-
-
-
-
+    private int baseHealth = 0, baseAttack = 0;
+    private Weapon weapon =  new Weapon();
+    private Armor armor = new Armor();
+    private int maxHp = 0, attackPower = 0;
 
     public Enemy(String names, int baseAttack, int baseHealth, Weapon weapon, Armor armor) {
         this.names = names;
         this.baseAttack = baseAttack;
         this.baseHealth = baseHealth;
+        maxHp = baseHealth + armor.getDefenceBonus();
+        attackPower = baseAttack + weapon.getAttackBonus();
         this.weapon = weapon;
         this.armor = armor;
 
 
+
+
     }
 
+    public String getWeaponName() {
+        return weapon.getWeaponName();
+    }
 
 
     public Enemy(String names) {
@@ -34,11 +36,12 @@ public class Enemy {
         this.names = names;
         this.baseAttack = baseAttack;
         this.baseHealth = baseHealth;
+        maxHp = baseHealth + armor.getDefenceBonus();
+
     }
 
-
     public int getMaxHealth() {
-        return baseHealth + armor.getDefenceBonus();
+        return maxHp;
     }
 
     public int getAttackPower() {
@@ -50,12 +53,9 @@ public class Enemy {
     }
 
 
-
-    public void setBaseHealth(int baseHealth) {
-        this.baseHealth = baseHealth;
+    public void setMaxHealth(int maxHealth) {
+        maxHp = maxHealth;
     }
 
-    public void setBaseAttack(int baseAttack) {
-        this.baseAttack = baseAttack;
-    }
+
 }
