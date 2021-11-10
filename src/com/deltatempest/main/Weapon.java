@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Weapon {
     private int attackBonus = 0;
-    private String weaponName;
+    private String weaponName = "CUk";
 
 
 

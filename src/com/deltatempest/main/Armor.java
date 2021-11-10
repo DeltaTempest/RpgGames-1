@@ -24,7 +24,9 @@ public class Armor {
         this.armorNames = armorNames;
     }
 
-
+    public String getArmorName() {
+        return armorNames;
+    }
 
     public int getDefenceBonus() {
         return defenceBonus;
